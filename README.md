@@ -25,3 +25,7 @@ examples thus some of the code is Copyright © 2001-2013 Python
 Software Foundation; All Rights Reserved under the PSF license (GPL
 compatible) http://docs.python.org/2/library/socketserver.html
 
+Reference list
+========================
+https://linuxize.com/post/python-check-if-file-exists/
+https://www.runoob.com/python/att-string-strip.html
