@@ -30,9 +30,50 @@ import socketserver
 class MyWebServer(socketserver.BaseRequestHandler):
     
     def handle(self):
-        self.data = self.request.recv(1024).strip()
-        print ("Got a request of: %s\n" % self.data)
-        self.request.sendall(bytearray("OK",'utf-8'))
+        self.data = self.request.recv(1024).strip().decode( 'utf-8' ).split()
+        
+        respond_list = { 200: 'HTTP/1.1 200 OK\r\n',
+                         404: 'HTTP/1.1 404 Not Found\r\n',
+                         405: 'HTTP/1.1 405 Method Not Allowed\r\n',
+                         302: 'HTTP/1.1 302 Found\r\n' }
+
+        respond_type = 200
+        path = 'www' + self.data[ 1 ]
+
+        # If not GET command, then all respond 405 code.
+        if self.data[ 0 ] != 'GET':
+            respond_type = 405
+        # If there has .. include the path, it was redirection to other path, don't deal with it, just respond 404 code.
+        elif '..' in self.data[ 1 ]:
+            respond_type = 404
+        # Then check the path is valid or not.
+        else:
+            # If the path is vaild, and if endwith /, adding index.html to it. 
+            if path[ -1 ] == '/' and os.path.isdir( path ):
+                path += 'index.html'
+            # If the path is direction but without /, like ../deep without / (../deep/index.html)
+            elif os.path.isdir( path + '/' ):
+                respond_type = 302
+            # If the file is invaild, like not find or not exist
+            elif os.path.isfile( path ) == False:
+                respond_type = 404
+
+        # If the respond still 200 OK, then is pass
+        if respond_type == 200:
+            context = ""
+            file = open( path, 'r' )
+            for line in file:
+                context += line
+
+            # Get the text type of the file. which is the end name of that file.
+            text_type = path.split( '/' )[ -1 ].split( '.' )[ -1 ]
+            # Modify the respond message for the request (Headed and include the file context of html or css).
+            respond_list[ 200 ] += 'Content-Type: text/' + text_type + '; charset=utf-8\r\n\r\n' + context
+
+        # Respond the request.
+        self.request.sendall( bytearray( respond_list[ respond_type ], 'utf-8' ) )
+
+        return
 
 if __name__ == "__main__":
     HOST, PORT = "localhost", 8080
