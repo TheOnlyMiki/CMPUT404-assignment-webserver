@@ -27,5 +27,5 @@ compatible) http://docs.python.org/2/library/socketserver.html
 
 Reference list
 ========================
-https://linuxize.com/post/python-check-if-file-exists/
+https://linuxize.com/post/python-check-if-file-exists/ 
 https://www.runoob.com/python/att-string-strip.html
