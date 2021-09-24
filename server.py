@@ -31,6 +31,7 @@ import os.path
 class MyWebServer(socketserver.BaseRequestHandler):
     
     def handle(self):
+        # Source: https://www.runoob.com/python/att-string-strip.html
         self.data = self.request.recv(1024).strip().decode( 'utf-8' ).split()
         
         respond_list = { 200: 'HTTP/1.1 200 OK\r\n',
@@ -48,6 +49,7 @@ class MyWebServer(socketserver.BaseRequestHandler):
         elif '..' in self.data[ 1 ]:
             respond_type = 404
         # Then check the path is valid or not.
+        # Source 1: https://linuxize.com/post/python-check-if-file-exists/
         else:
             # If the path is vaild, and if endwith /, adding index.html to it. 
             if path[ -1 ] == '/' and os.path.isdir( path ):
